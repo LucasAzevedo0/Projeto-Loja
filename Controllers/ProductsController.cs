@@ -229,6 +229,12 @@ namespace LojaRemastered.Controllers
 
         }
 
+        public async Task<IActionResult> Store()
+        {
+            // Opcional: Filtrar somente produtos disponíveis, se necessário.
+            var products = await _context.Products.ToListAsync();
+            return View(products);
+        }
 
 
 

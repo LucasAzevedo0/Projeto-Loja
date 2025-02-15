@@ -55,6 +55,7 @@ namespace LojaRemastered.Controllers
             {
                 return NotFound("Produto não encontrado.");
             }
+            
 
             var cart = await GetCartAsync();
 
