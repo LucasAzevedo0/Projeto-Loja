@@ -1,0 +1,43 @@
+﻿@model LojaRemastered.Models.Cart
+
+@{
+    ViewData["Title"] = "Checkout";
+}
+
+<h2>Checkout</h2>
+
+@if (Model.Items.Any())
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Produto</th>
+                <th>Preço Unitário</th>
+                <th>Quantidade</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Items)
+            {
+                <tr>
+                    <td>@item.ProductName</td>
+                    <td>@item.Price.ToString("C")</td>
+                    <td>@item.Quantity</td>
+                    <td>@item.TotalPrice.ToString("C")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <h3>Total a Pagar: @Model.TotalPrice.ToString("C")</h3>
+
+    <!-- Aqui você pode incluir um formulário para confirmar a compra -->
+    <form asp-action="Checkout" method="post">
+        <button type="submit" class="btn btn-success">Confirmar Compra</button>
+    </form>
+}
+else
+{
+    <p>Seu carrinho está vazio.</p>
+}

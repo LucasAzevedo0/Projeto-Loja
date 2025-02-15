@@ -1,35 +1,55 @@
-﻿@model IEnumerable<LojaRemastered.Models.Cart>
+﻿@model LojaRemastered.Models.Cart
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Meu Carrinho";
 }
 
-<h1>Index</h1>
+<h2>Meu Carrinho</h2>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.UserId)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.UserId)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
+@if (Model.Items.Any())
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Produto</th>
+                <th>Preço Unitário</th>
+                <th>Quantidade</th>
+                <th>Total</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Items)
+            {
+                <tr>
+                    <td>@item.ProductName</td>
+                    <td>@item.Price.ToString("C")</td>
+                    <td>@item.Quantity</td>
+                    <td>@item.TotalPrice.ToString("C")</td>
+                    <td>
+                        <!-- Botão para remover o item -->
+                        <form asp-action="RemoveFromCart" method="post" style="display:inline;">
+                            <input type="hidden" name="cartItemId" value="@item.Id" />
+                            <button type="submit" class="btn btn-danger btn-sm">Remover</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <h3>Total: @Model.TotalPrice.ToString("C")</h3>
+
+    <div>
+        <!-- Botão para limpar o carrinho -->
+        <form asp-action="ClearCart" method="post" style="display:inline;">
+            <button type="submit" class="btn btn-warning">Limpar Carrinho</button>
+        </form>
+        <!-- Link para finalizar a compra -->
+        <a asp-action="Checkout" class="btn btn-primary">Finalizar Compra</a>
+    </div>
 }
-    </tbody>
-</table>
+else
+{
+    <p>Seu carrinho está vazio.</p>
+}
