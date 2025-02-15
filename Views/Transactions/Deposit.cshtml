@@ -1,0 +1,13 @@
+﻿@{
+    ViewData["Title"] = "Depositar Fundos";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<form asp-controller="Transactions" asp-action="Deposit" method="post">
+    <div class="form-group">
+        <label for="amount">Valor a depositar</label>
+        <input type="number" class="form-control" id="amount" name="amount" step="0.01" required />
+    </div>
+    <button type="submit" class="btn btn-primary">Depositar</button>
+</form>

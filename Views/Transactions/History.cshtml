@@ -1,0 +1,38 @@
+﻿@model IEnumerable<LojaRemastered.Models.Transaction>
+
+@{
+    ViewData["Title"] = "Histórico de Transações";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+@if (Model.Any())
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Data</th>
+                <th>Tipo</th>
+                <th>Valor</th>
+                <th>Saldo Após</th>
+                <th>Usuário Relacionado</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var transaction in Model)
+            {
+                <tr>
+                    <td>@transaction.TransactionDate.ToString("dd/MM/yyyy HH:mm")</td>
+                    <td>@transaction.TransactionType</td>
+                    <td>@transaction.Amount.ToString("C")</td>
+                    <td>@transaction.BalanceAfterTransaction.ToString("C")</td>
+                    <td>@transaction.RelatedUserId</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>Não há transações registradas.</p>
+}

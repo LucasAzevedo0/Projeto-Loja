@@ -32,9 +32,8 @@
 
     <h3>Total a Pagar: @Model.TotalPrice.ToString("C")</h3>
 
-    <!-- Aqui você pode incluir um formulário para confirmar a compra -->
-    <form asp-action="Checkout" method="post">
-        <button type="submit" class="btn btn-success">Confirmar Compra</button>
+    <form asp-controller="Transactions" asp-action="BuyProducts" method="post">
+        <button type="submit" class="btn btn-sm btn-outline-success">Finalizar Compra</button>
     </form>
 }
 else
