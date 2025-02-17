@@ -1,42 +1,41 @@
 ﻿@model LojaRemastered.Models.Cart
 
-@{
-    ViewData["Title"] = "Checkout";
-}
+<div class="container my-4">
+    <h2 class="mb-4">Checkout</h2>
 
-<h2>Checkout</h2>
-
-@if (Model.Items.Any())
-{
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Produto</th>
-                <th>Preço Unitário</th>
-                <th>Quantidade</th>
-                <th>Total</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model.Items)
-            {
+    @if (Model.Items.Any())
+    {
+        <table class="table table-striped table-hover">
+            <thead>
                 <tr>
-                    <td>@item.ProductName</td>
-                    <td>@item.Price.ToString("C")</td>
-                    <td>@item.Quantity</td>
-                    <td>@item.TotalPrice.ToString("C")</td>
+                    <th>Produto</th>
+                    <th>Preço Unitário</th>
+                    <th>Quantidade</th>
+                    <th>Total</th>
                 </tr>
-            }
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Items)
+                {
+                    <tr>
+                        <td>@item.ProductName</td>
+                        <td>@item.Price.ToString("C")</td>
+                        <td>@item.Quantity</td>
+                        <td>@item.TotalPrice.ToString("C")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
 
-    <h3>Total a Pagar: @Model.TotalPrice.ToString("C")</h3>
-
-    <form asp-controller="Transactions" asp-action="BuyProducts" method="post">
-        <button type="submit" class="btn btn-sm btn-outline-success">Finalizar Compra</button>
-    </form>
-}
-else
-{
-    <p>Seu carrinho está vazio.</p>
-}
+        <div class="d-flex justify-content-end align-items-center">
+            <h3 class="me-3">Total a Pagar: @Model.TotalPrice.ToString("C")</h3>
+            <form asp-controller="Transactions" asp-action="BuyProducts" method="post">
+                <button type="submit" class="btn btn-success">Finalizar Compra</button>
+            </form>
+        </div>
+    }
+    else
+    {
+        <p>Seu carrinho está vazio.</p>
+    }
+</div>

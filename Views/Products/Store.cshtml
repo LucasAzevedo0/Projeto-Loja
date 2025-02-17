@@ -4,41 +4,44 @@
     ViewData["Title"] = "Loja";
 }
 
-<h2>Loja</h2>
+<div class="container my-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>Nossos Produtos</h2>
+        <!-- Link para vender -->
+        <a class="btn btn-outline-info" asp-area="" asp-controller="Products" asp-action="Create">Vender</a>
+    </div>
 
-<div class="row">
-    @foreach (var product in Model)
-    {
-        <div class="col-md-4">
-            <div class="card mb-4 shadow-sm">
-                <div class="card-body">
-                    <h5 class="card-title">@product.Name</h5>
-                    <p class="card-text">Preço: @product.Price.ToString("C")</p>
-                    <p class="card-text">Estoque: @product.Stocks</p>
-
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div class="btn-group">
+    <div class="row">
+        @foreach (var product in Model)
+        {
+            <div class="col-md-4 mb-3">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">@product.Name</h5>
+                        <p class="card-text"><strong>Preço:</strong> @product.Price.ToString("C")</p>
+                        <p class="card-text"><strong>Estoque:</strong> @product.Stocks</p>
+                    </div>
+                    <div class="card-footer bg-transparent border-top-0">
+                        <div class="btn-group" role="group">
                             <!-- Link para ver detalhes do produto -->
                             <a asp-action="Details" asp-route-id="@product.Id" class="btn btn-sm btn-outline-secondary">Detalhes</a>
 
-                            <!-- Link para adicionar ao carrinho -->
+                            <!-- Formulário para adicionar ao carrinho -->
                             <form asp-controller="Cart" asp-action="AddToCart" method="post" class="d-inline">
                                 <input type="hidden" name="productId" value="@product.Id" />
                                 <input type="hidden" name="quantity" value="1" />
                                 <button type="submit" class="btn btn-sm btn-outline-primary">Adicionar ao Carrinho</button>
                             </form>
 
-                            <!-- Link para comprar direto (se implementado) -->
+                            <!-- Formulário para comprar direto -->
                             <form asp-controller="Transactions" asp-action="BuyProduct" method="post" class="d-inline">
                                 <input type="hidden" name="productId" value="@product.Id" />
                                 <button type="submit" class="btn btn-sm btn-outline-success">Comprar</button>
                             </form>
-
-
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-    }
+        }
+    </div>
 </div>

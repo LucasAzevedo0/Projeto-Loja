@@ -118,7 +118,7 @@ namespace LojaRemastered.Controllers
             // Remove o item do carrinho
             _context.CartItems.Remove(cartItem);
             await _context.SaveChangesAsync();
-            return RedirectToAction("Index");
+            return RedirectToAction("Store");
         }
 
 
@@ -149,7 +149,7 @@ namespace LojaRemastered.Controllers
 
             await _context.SaveChangesAsync();
 
-            return RedirectToAction("Index");
+            return RedirectToAction("Store" ,"Products");
         }
 
         // Exibe a página de checkout (ainda a ser implementada)
