@@ -111,14 +111,14 @@ namespace LojaRemastered.Controllers
             if (product != null)
             {
                 // Devolve ao estoque a quantidade reservada para esse item
-                product.Stocks += cartItem.Quantity;
+                
                 _context.Products.Update(product);
             }
 
             // Remove o item do carrinho
             _context.CartItems.Remove(cartItem);
             await _context.SaveChangesAsync();
-            return RedirectToAction("Store");
+            return RedirectToAction("Store", "Products");
         }
 
 
