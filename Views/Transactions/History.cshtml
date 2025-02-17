@@ -1,38 +1,48 @@
 ﻿@model IEnumerable<LojaRemastered.Models.Transaction>
 
-@{
-    ViewData["Title"] = "Histórico de Transações";
-}
+<div class="container my-4">
+    <h2 class="mb-3">@ViewData["Title"]</h2>
+    <p class="lead">
+        <strong>Seu saldo atual:</strong> @ViewBag.CurrentBalance.ToString("C")
+    </p>
 
-<h2>@ViewData["Title"]</h2>
+    <!-- Botão para depositar fundos -->
+    <div class="mb-3">
+        <a class="btn btn-outline-info" asp-area="" asp-controller="Transactions" asp-action="Deposit">Depositar</a>
+    </div>
 
-@if (Model.Any())
-{
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>Data</th>
-                <th>Tipo</th>
-                <th>Valor</th>
-                <th>Saldo Após</th>
-                <th>Usuário Relacionado</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var transaction in Model)
-            {
+    @if (Model.Any())
+    {
+        <table class="table table-striped table-hover">
+            <thead>
                 <tr>
-                    <td>@transaction.TransactionDate.ToString("dd/MM/yyyy HH:mm")</td>
-                    <td>@transaction.TransactionType</td>
-                    <td>@transaction.Amount.ToString("C")</td>
-                    <td>@transaction.BalanceAfterTransaction.ToString("C")</td>
-                    <td>@transaction.RelatedUserId</td>
+                    <th>Data</th>
+                    <th>Tipo</th>
+                    <th>Valor</th>
+                    <th>Saldo Após</th>
+                    <th>Usuário Relacionado</th>
+                    <th>Ações</th>
                 </tr>
-            }
-        </tbody>
-    </table>
-}
-else
-{
-    <p>Não há transações registradas.</p>
-}
+            </thead>
+            <tbody>
+                @foreach (var transaction in Model)
+                {
+                    <tr>
+                        <td>@transaction.TransactionDate.ToString("dd/MM/yyyy HH:mm")</td>
+                        <td>@transaction.TransactionType</td>
+                        <td>@transaction.Amount.ToString("C")</td>
+                        <td>@transaction.BalanceAfterTransaction.ToString("C")</td>
+                        <td>@transaction.RelatedUserName</td>
+                        <td>
+                            <a asp-action="Details" asp-route-id="@transaction.Id" class="btn btn-sm btn-outline-primary">Detalhes</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p class="alert alert-info">Não há transações registradas.</p>
+    }
+</div>

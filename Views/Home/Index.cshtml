@@ -1,8 +1,49 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Home";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="container my-4">
+    <!-- Seção de Boas-vindas -->
+    <div class="p-5 mb-4 bg-light rounded-3">
+        <div class="container-fluid py-5">
+            <h1 class="display-5 fw-bold">Bem-vindo à LojaRemastered!</h1>
+            <p class="col-md-8 fs-4">
+                Encontre os melhores produtos com preços incríveis. Navegue pelo nosso catálogo e descubra ofertas imperdíveis.
+            </p>
+            <a class="btn btn-primary btn-lg" asp-controller="Products" asp-action="Store" role="button">
+                Acessar a Loja
+            </a>
+        </div>
+    </div>
+
+    <!-- Seção de Destaques -->
+    <div class="row">
+        <div class="col-md-4 mb-3">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">Ofertas Especiais</h5>
+                    <p class="card-text">Confira produtos com descontos incríveis e aproveite ofertas exclusivas.</p>
+                    <a href="#" class="btn btn-outline-primary">Ver Ofertas</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">Novidades</h5>
+                    <p class="card-text">Veja os lançamentos mais recentes e fique por dentro das tendências.</p>
+                    <a href="#" class="btn btn-outline-primary">Ver Novidades</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">Depoimentos</h5>
+                    <p class="card-text">Leia o que nossos clientes têm a dizer sobre sua experiência de compra.</p>
+                    <a href="#" class="btn btn-outline-primary">Ver Depoimentos</a>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

@@ -55,14 +55,22 @@ namespace LojaRemastered.Controllers
             {
                 return NotFound("Produto não encontrado.");
             }
-            
 
+            // Verifica se há estoque suficiente
+            if (product.Stocks < quantity)
+            {
+                TempData["Error"] = "Estoque insuficiente para essa quantidade.";
+                return RedirectToAction("Store", "Products");
+            }
+
+            // Recupera ou cria o carrinho do usuário
             var cart = await GetCartAsync();
 
             // Verifica se o item já existe no carrinho e atualiza a quantidade, ou adiciona um novo item
             var cartItem = cart.Items.FirstOrDefault(i => i.ProductId == productId);
             if (cartItem != null)
             {
+                // Adiciona a quantidade e reserva o estoque correspondente
                 cartItem.Quantity += quantity;
             }
             else
@@ -79,9 +87,14 @@ namespace LojaRemastered.Controllers
                 cart.Items.Add(newItem);
             }
 
+            // Reserva o estoque: diminui a quantidade disponível do produto
+            
+            _context.Products.Update(product);
+
             await _context.SaveChangesAsync();
             return RedirectToAction("Index");
         }
+
 
         // Remove um item do carrinho
         [HttpPost]
@@ -93,21 +106,50 @@ namespace LojaRemastered.Controllers
                 return NotFound("Item do carrinho não encontrado.");
             }
 
+            // Recupera o produto relacionado ao item do carrinho
+            var product = await _context.Products.FindAsync(cartItem.ProductId);
+            if (product != null)
+            {
+                // Devolve ao estoque a quantidade reservada para esse item
+                product.Stocks += cartItem.Quantity;
+                _context.Products.Update(product);
+            }
+
+            // Remove o item do carrinho
             _context.CartItems.Remove(cartItem);
             await _context.SaveChangesAsync();
-
-            return RedirectToAction("Index");
+            return RedirectToAction("Store");
         }
+
 
         // Limpa o carrinho
         [HttpPost]
         public async Task<IActionResult> ClearCart()
         {
             var cart = await GetCartAsync();
+
+            // Itera sobre uma cópia da lista para evitar problemas ao modificar a coleção
+            foreach (var item in cart.Items.ToList())
+            {
+                // Recupera o produto associado ao item do carrinho
+                var product = await _context.Products.FindAsync(item.ProductId);
+                if (product != null)
+                {
+                    // Libera o estoque, adicionando a quantidade reservada de volta
+                    product.Stocks += item.Quantity;
+                    _context.Products.Update(product);
+                }
+
+                // Remove o item do carrinho
+                _context.CartItems.Remove(item);
+            }
+
+            // Limpa a lista de itens no carrinho (opcional, pois os itens já foram removidos do contexto)
             cart.Clear();
+
             await _context.SaveChangesAsync();
 
-            return RedirectToAction("Index");
+            return RedirectToAction("Store" ,"Products");
         }
 
         // Exibe a página de checkout (ainda a ser implementada)

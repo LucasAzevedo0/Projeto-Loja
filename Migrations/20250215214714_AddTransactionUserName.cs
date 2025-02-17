@@ -2,28 +2,28 @@
 
 #nullable disable
 
-namespace LojaRemastered.Data.Migrations
+namespace LojaRemastered.Migrations
 {
     /// <inheritdoc />
-    public partial class AddBalanceToUser : Migration
+    public partial class AddTransactionUserName : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<decimal>(
-                name: "Balance",
-                table: "AspNetUsers",
-                type: "decimal(18,2)",
+            migrationBuilder.AddColumn<string>(
+                name: "RelatedUserName",
+                table: "Transactions",
+                type: "nvarchar(max)",
                 nullable: false,
-                defaultValue: 0m);
+                defaultValue: "");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "Balance",
-                table: "AspNetUsers");
+                name: "RelatedUserName",
+                table: "Transactions");
         }
     }
 }

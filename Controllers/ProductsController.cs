@@ -75,7 +75,7 @@ namespace LojaRemastered.Controllers
             _context.Products.Add(product);
             await _context.SaveChangesAsync();
 
-            return RedirectToAction("Index");
+            return RedirectToAction("Store");
         }
 
         // GET: Products/Edit/5
@@ -150,7 +150,7 @@ namespace LojaRemastered.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(MyProducts));
+                return RedirectToAction("MyProducts");
             }
 
             // Se ModelState não for válido, retorna a View com o modelo para exibir os erros de validação

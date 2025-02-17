@@ -9,11 +9,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace LojaRemastered.Data.Migrations
+namespace LojaRemastered.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250215134426_TransacionModel")]
-    partial class TransacionModel
+    [Migration("20250215214714_AddTransactionUserName")]
+    partial class AddTransactionUserName
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -193,6 +193,10 @@ namespace LojaRemastered.Data.Migrations
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("RelatedUserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RelatedUserName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 

@@ -189,7 +189,10 @@ namespace LojaRemastered.Controllers
             {
                 UserId = userId,
                 RelatedUserId = userId, // Em depósito, o usuário é ele mesmo
+                RelatedUserName = user.UserName,
                 Amount = amount,
+                Quantity = 1,
+                ProductName = "Deposit",
                 TransactionType = TransactionType.Deposit,
                 TransactionDate = DateTime.UtcNow,
                 BalanceAfterTransaction = user.Balance
@@ -199,7 +202,7 @@ namespace LojaRemastered.Controllers
             await _context.SaveChangesAsync();
 
             TempData["Success"] = "Depósito realizado com sucesso!";
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("History", "Transactions");
         }
 
         // ---------------------------------------------------
@@ -248,25 +251,32 @@ namespace LojaRemastered.Controllers
             buyer.Balance -= product.Price;
             seller.Balance += product.Price;
 
-            // Cria as transações
+            // Cria a transação para o comprador (Purchase)
             var purchaseTransaction = new Transaction
             {
                 UserId = buyer.Id,
                 RelatedUserId = seller.Id,
+                RelatedUserName = seller.UserName, // para o comprador, o usuário relacionado é o vendedor
                 Amount = product.Price,
                 TransactionType = TransactionType.Purchase,
                 TransactionDate = DateTime.UtcNow,
-                BalanceAfterTransaction = buyer.Balance
+                BalanceAfterTransaction = buyer.Balance,
+                ProductName = product.Name,
+                Quantity = 1
             };
 
+            // Cria a transação para o vendedor (Sale)
             var saleTransaction = new Transaction
             {
                 UserId = seller.Id,
                 RelatedUserId = buyer.Id,
+                RelatedUserName = buyer.UserName, // para o vendedor, o usuário relacionado é o comprador
                 Amount = product.Price,
                 TransactionType = TransactionType.Sale,
                 TransactionDate = DateTime.UtcNow,
-                BalanceAfterTransaction = seller.Balance
+                BalanceAfterTransaction = seller.Balance,
+                ProductName = product.Name,
+                Quantity = 1
             };
 
             _context.Transactions.Add(purchaseTransaction);
@@ -288,6 +298,7 @@ namespace LojaRemastered.Controllers
             TempData["Success"] = "Compra realizada com sucesso!";
             return RedirectToAction("Store", "Products");
         }
+
 
 
 
@@ -316,13 +327,12 @@ namespace LojaRemastered.Controllers
             }
 
             // Processa cada item do carrinho
-            foreach (var item in cart.Items.ToList())  // ToList() para evitar modificar a coleção enquanto iteramos
+            foreach (var item in cart.Items.ToList())
             {
                 // Recupera o produto (garante que o produto exista)
                 var product = await _context.Products.FindAsync(item.ProductId);
                 if (product == null)
                 {
-                    // Se o produto não existir, remove o item do carrinho e continua
                     _context.CartItems.Remove(item);
                     continue;
                 }
@@ -361,10 +371,13 @@ namespace LojaRemastered.Controllers
                 {
                     UserId = buyer.Id,
                     RelatedUserId = seller.Id,
+                    RelatedUserName = buyer.UserName,
                     Amount = totalItemPrice,
                     TransactionType = TransactionType.Purchase,
                     TransactionDate = DateTime.UtcNow,
-                    BalanceAfterTransaction = buyer.Balance
+                    BalanceAfterTransaction = buyer.Balance,
+                    Quantity = item.Quantity,
+                    ProductName = product.Name
                 };
 
                 // Cria a transação para o vendedor (Sale)
@@ -372,24 +385,25 @@ namespace LojaRemastered.Controllers
                 {
                     UserId = seller.Id,
                     RelatedUserId = buyer.Id,
+                    RelatedUserName = seller.UserName,
                     Amount = totalItemPrice,
                     TransactionType = TransactionType.Sale,
                     TransactionDate = DateTime.UtcNow,
-                    BalanceAfterTransaction = seller.Balance
+                    BalanceAfterTransaction = seller.Balance,
+                    Quantity = item.Quantity,
+                    ProductName = product.Name
                 };
 
                 _context.Transactions.Add(purchaseTransaction);
                 _context.Transactions.Add(saleTransaction);
 
-                // Atualiza a lógica de estoque:
-                if (item.Quantity == product.Stocks)
+                // Atualiza a lógica de estoque: use apenas um bloco para isso
+                if (product.Stocks - item.Quantity <= 0)
                 {
-                    // Se o usuário comprou todas as unidades, remove o produto do catálogo
                     _context.Products.Remove(product);
                 }
                 else
                 {
-                    // Caso contrário, atualiza o estoque reduzindo a quantidade comprada
                     product.Stocks -= item.Quantity;
                     _context.Products.Update(product);
                 }
@@ -416,11 +430,14 @@ namespace LojaRemastered.Controllers
 
 
 
-
         [Authorize]
         public async Task<IActionResult> History()
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var user = await _userManager.FindByIdAsync(userId);
+            // Passa o saldo atual para a view
+            ViewBag.CurrentBalance = user.Balance;
+
             var transactions = await _context.Transactions
                 .Where(t => t.UserId == userId)
                 .OrderByDescending(t => t.TransactionDate)
