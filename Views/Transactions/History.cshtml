@@ -5,6 +5,7 @@
 }
 
 <h2>@ViewData["Title"]</h2>
+<p><strong>Seu saldo atual:</strong> @ViewBag.CurrentBalance.ToString("C")</p>
 
 @if (Model.Any())
 {
@@ -16,6 +17,7 @@
                 <th>Valor</th>
                 <th>Saldo Após</th>
                 <th>Usuário Relacionado</th>
+                <th>Ações</th>
             </tr>
         </thead>
         <tbody>
@@ -26,7 +28,10 @@
                     <td>@transaction.TransactionType</td>
                     <td>@transaction.Amount.ToString("C")</td>
                     <td>@transaction.BalanceAfterTransaction.ToString("C")</td>
-                    <td>@transaction.RelatedUserId</td>
+                    <td>@transaction.RelatedUserName</td>
+                    <td>
+                        <a asp-action="Details" asp-route-id="@transaction.Id" class="btn btn-sm btn-outline-primary">Detalhes</a>
+                    </td>
                 </tr>
             }
         </tbody>

@@ -20,8 +20,12 @@ namespace LojaRemastered.Models
 
 
         [Required]
-        [Display(Name = "Usuario Relacionado a Transação")]
+        [Display(Name = "ID Usuario Relacionado a Transação")]
         public string RelatedUserId { get; set; }
+
+        [Required]
+        [Display(Name = "Nome Usuario Relacionado a Transação")]
+        public string RelatedUserName { get; set; }
 
 
         [Required]
@@ -41,8 +45,13 @@ namespace LojaRemastered.Models
         [Display(Name = "Saldo Após a Transação")]
         public decimal BalanceAfterTransaction { get; set; }
 
+        [Required]
+        [Display(Name = "Nome do produto")]
+        public string? ProductName { get; set; }
 
-        
+        [Required]
+        [Display(Name = "Quantidade de produtos")]
+        public int? Quantity { get; set; }
 
     }
 }
