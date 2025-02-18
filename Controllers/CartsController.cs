@@ -56,22 +56,31 @@ namespace LojaRemastered.Controllers
                 return NotFound("Produto não encontrado.");
             }
 
-            // Verifica se há estoque suficiente
-            if (product.Stocks < quantity)
+            // Recupera ou cria o carrinho do usuário
+            var cart = await GetCartAsync();
+
+            // Verifica se o item já existe no carrinho
+            var cartItem = cart.Items.FirstOrDefault(i => i.ProductId == productId);
+
+            // Se o estoque for 1 e o item já estiver no carrinho, bloqueia a adição
+            if (product.Stocks == 1 && cartItem != null)
+            {
+                TempData["Error"] = "Esse produto já está no seu carrinho e há apenas uma unidade em estoque.";
+                return RedirectToAction("Store", "Products");
+            }
+
+            // Verifica se há estoque suficiente para a nova adição
+            if (product.Stocks < quantity + (cartItem?.Quantity ?? 0))
             {
                 TempData["Error"] = "Estoque insuficiente para essa quantidade.";
                 return RedirectToAction("Store", "Products");
             }
 
-            // Recupera ou cria o carrinho do usuário
-            var cart = await GetCartAsync();
-
-            // Verifica se o item já existe no carrinho e atualiza a quantidade, ou adiciona um novo item
-            var cartItem = cart.Items.FirstOrDefault(i => i.ProductId == productId);
             if (cartItem != null)
             {
-                // Adiciona a quantidade e reserva o estoque correspondente
+                // Adiciona a quantidade ao item já existente
                 cartItem.Quantity += quantity;
+                TempData["Success"] = "Produto Adicionado ao Carrinho.";
             }
             else
             {
@@ -87,13 +96,15 @@ namespace LojaRemastered.Controllers
                 cart.Items.Add(newItem);
             }
 
-            // Reserva o estoque: diminui a quantidade disponível do produto
+            // Atualiza o estoque do produto
             
             _context.Products.Update(product);
 
             await _context.SaveChangesAsync();
-            return RedirectToAction("Index");
+            TempData["Success"] = "Produto Adicionado ao Carrinho.";
+            return RedirectToAction("Store", "Products");
         }
+
 
 
         // Remove um item do carrinho
@@ -111,14 +122,14 @@ namespace LojaRemastered.Controllers
             if (product != null)
             {
                 // Devolve ao estoque a quantidade reservada para esse item
-                product.Stocks += cartItem.Quantity;
+                
                 _context.Products.Update(product);
             }
 
             // Remove o item do carrinho
             _context.CartItems.Remove(cartItem);
             await _context.SaveChangesAsync();
-            return RedirectToAction("Store");
+            return RedirectToAction("Store", "Products");
         }
 
 
@@ -136,7 +147,7 @@ namespace LojaRemastered.Controllers
                 if (product != null)
                 {
                     // Libera o estoque, adicionando a quantidade reservada de volta
-                    product.Stocks += item.Quantity;
+                    
                     _context.Products.Update(product);
                 }
 

@@ -351,7 +351,8 @@ namespace LojaRemastered.Controllers
                 if (buyer.Balance < totalItemPrice)
                 {
                     TempData["Error"] = $"Saldo insuficiente para comprar {product.Name}.";
-                    return RedirectToAction("Checkout", "Cart");
+                    Thread.Sleep(5000);
+                    return RedirectToAction("Deposit", "Transactions");
                 }
 
                 // Recupera o vendedor do produto
