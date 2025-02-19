@@ -24,6 +24,12 @@ namespace LojaRemastered.Controllers
         private async Task<Cart> GetCartAsync()
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (string.IsNullOrEmpty(userId))
+            {
+                throw new InvalidOperationException("Usuário não está autenticado.");
+            }
+
             var cart = await _context.Carts
                 .Include(c => c.Items)
                 .FirstOrDefaultAsync(c => c.UserId == userId);
@@ -35,8 +41,10 @@ namespace LojaRemastered.Controllers
                 _context.Carts.Add(cart);
                 await _context.SaveChangesAsync();
             }
+
             return cart;
         }
+
 
         // Exibe a página com os itens do carrinho
         public async Task<IActionResult> Index()

@@ -12,9 +12,13 @@
 
         public Cart(string userId)
         {
+            if (string.IsNullOrEmpty(userId))
+            {
+                throw new ArgumentNullException(nameof(userId), "UserId não pode ser nulo ou vazio.");
+            }
+
             UserId = userId;
         }
-
         public void AddItem(Product product, int quantity)
         {
             var existingItem = Items.FirstOrDefault(i => i.ProductId == product.Id);
