@@ -4,8 +4,16 @@
 
 <div class="container my-4">
     <h2 class="mb-3">@ViewData["Title"]</h2>
-    
-   
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger">@TempData["Error"]</div>
+    }
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success">@TempData["Success"]</div>
+    }
 
     <form asp-controller="Transactions" asp-action="Deposit" method="post">
         @Html.AntiForgeryToken()
