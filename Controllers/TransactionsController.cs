@@ -366,13 +366,13 @@ namespace LojaRemastered.Controllers
                 // Atualiza os saldos: deduz do comprador e credita no vendedor
                 buyer.Balance -= totalItemPrice;
                 seller.Balance += totalItemPrice;
-
+                
                 // Cria a transação para o comprador (Purchase)
                 var purchaseTransaction = new Transaction
                 {
                     UserId = buyer.Id,
                     RelatedUserId = seller.Id,
-                    RelatedUserName = buyer.UserName,
+                    RelatedUserName = seller.UserName,
                     Amount = totalItemPrice,
                     TransactionType = TransactionType.Purchase,
                     TransactionDate = DateTime.UtcNow,
