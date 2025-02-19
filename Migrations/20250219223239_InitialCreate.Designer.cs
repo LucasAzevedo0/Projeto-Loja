@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LojaRemastered.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250215214714_AddTransactionUserName")]
-    partial class AddTransactionUserName
+    [Migration("20250219223239_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -191,6 +191,13 @@ namespace LojaRemastered.Migrations
 
                     b.Property<decimal>("BalanceAfterTransaction")
                         .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("ProductName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
 
                     b.Property<string>("RelatedUserId")
                         .IsRequired()

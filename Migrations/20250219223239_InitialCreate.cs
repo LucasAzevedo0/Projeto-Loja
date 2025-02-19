@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace LojaRemastered.Migrations
 {
     /// <inheritdoc />
-    public partial class FinalVersion : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -90,10 +90,13 @@ namespace LojaRemastered.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     UserId = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     RelatedUserId = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    RelatedUserName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Amount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     TransactionType = table.Column<int>(type: "int", nullable: false),
                     TransactionDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    BalanceAfterTransaction = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
+                    BalanceAfterTransaction = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    ProductName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Quantity = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {

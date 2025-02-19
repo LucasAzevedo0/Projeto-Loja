@@ -7,8 +7,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Configuração do banco de dados
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"),
+        sqlOptions => sqlOptions.EnableRetryOnFailure()));
 // Configuração do Identity com ApplicationUser
 builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
 {
@@ -62,7 +62,7 @@ app.Run();
 
 async Task SeedAdminAccount(UserManager<ApplicationUser> userManager)
 {
-    string adminUserName = "admin@admin.com";
+    
     string adminEmail = "admin@admin.com";
     string adminPassword = "Admin123!"; // Senha padrão de demonstração
     
