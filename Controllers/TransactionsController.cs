@@ -202,6 +202,7 @@ namespace LojaRemastered.Controllers
             await _context.SaveChangesAsync();
 
             TempData["Success"] = "Depósito realizado com sucesso!";
+            TempData["Saldo"] = user.Balance;
             return RedirectToAction("History", "Transactions");
         }
 
