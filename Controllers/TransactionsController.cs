@@ -438,7 +438,7 @@ namespace LojaRemastered.Controllers
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var user = await _userManager.FindByIdAsync(userId);
             // Passa o saldo atual para a view
-            ViewBag.CurrentBalance = user.Balance;
+                ViewBag.CurrentBalance = user.Balance;
 
             var transactions = await _context.Transactions
                 .Where(t => t.UserId == userId)

@@ -1,46 +1,48 @@
 ﻿@model LojaRemastered.Models.Product
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Vender Produto";
 }
 
-<h1>Vender Produto</h1>
+<div class="container my-5">
+    <div class="card shadow-lg p-4">
+        <h2 class="text-center mb-4 text-primary">Venda seu Produto</h2>
+        <hr />
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <form asp-action="Create">
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
 
-<h4>Venda seus produtos aqui</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            
-            
-            
-            <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
-                <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger"></span>
+                    <div class="mb-3">
+                        <label asp-for="Name" class="form-label fw-bold">Nome do Produto</label>
+                        <input asp-for="Name" class="form-control" placeholder="Digite o nome do produto" />
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Price" class="form-label fw-bold">Preço (R$)</label>
+                        <input asp-for="Price" type="number" step="0.01" class="form-control" placeholder="Digite o preço" />
+                        <span asp-validation-for="Price" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Stocks" class="form-label fw-bold">Quantidade em Estoque</label>
+                        <input asp-for="Stocks" type="number" class="form-control" placeholder="Digite a quantidade" />
+                        <span asp-validation-for="Stocks" class="text-danger"></span>
+                    </div>
+
+                    <div class="d-grid gap-2 mt-4">
+                        <button type="submit" class="btn btn-success btn-lg">Vender</button>
+                        <a asp-action="MyProducts" class="btn btn-outline-secondary">Voltar</a>
+                    </div>
+                </form>
             </div>
-            <div class="form-group">
-                <label asp-for="Price" class="control-label"></label>
-                <input asp-for="Price" class="form-control" />
-                <span asp-validation-for="Price" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Stocks" class="control-label"></label>
-                <input asp-for="Stocks" class="form-control" />
-                <span asp-validation-for="Stocks" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Vender" class="btn btn-primary" />
-            </div>
-        </form>
+        </div>
     </div>
 </div>
 
-<div>
-    <a asp-action="MyProducts">Voltar</a>
-</div>
-
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }
