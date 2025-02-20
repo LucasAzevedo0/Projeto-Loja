@@ -49,7 +49,16 @@ namespace LojaRemastered.Controllers
         // Exibe a página com os itens do carrinho
         public async Task<IActionResult> Index()
         {
+            var userId = User.Identity.Name; // Obtém o identificador do usuário autenticado
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.UserName == userId); // Busca o usuário no banco
+
+            if (user == null)
+            {
+                return RedirectToAction("Login", "Account"); // Redireciona se o usuário não estiver autenticado
+            }
+
             var cart = await GetCartAsync();
+            ViewBag.UserBalance = user.Balance; // Agora user está garantido
             return View(cart);
         }
 

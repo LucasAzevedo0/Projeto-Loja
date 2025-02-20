@@ -4,53 +4,131 @@
     ViewData["Title"] = "Loja";
 }
 
+<!-- Adicione o formulário de busca -->
 <div class="container my-4">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h2>Nossos Produtos</h2>
-        <a class="btn btn-outline-info" asp-area="" asp-controller="Products" asp-action="Create">Vender</a>
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <form asp-action="Store" method="get" class="d-flex gap-2">
+                <div class="input-group">
+                    <input type="text"
+                           class="form-control"
+                           placeholder="Pesquisar produtos..."
+                           name="searchTerm"
+                           value="@ViewData["CurrentFilter"]">
+
+                    <select class="form-select"
+                            name="statusFilter"
+                            aria-label="Filtrar por status">
+                        <option value="">Todos</option>
+                        <option value="in-stock" selected="@(ViewData["CurrentStatus"]?.ToString() == "in-stock")">Em Estoque</option>
+                        <option value="low-stock" selected="@(ViewData["CurrentStatus"]?.ToString() == "low-stock")">Poucas Unidades</option>
+                        <option value="out-of-stock" selected="@(ViewData["CurrentStatus"]?.ToString() == "out-of-stock")">Esgotado</option>
+                    </select>
+
+                    <select class="form-select"
+                            name="sortOrder"
+                            aria-label="Ordenar por">
+                        <option value="">Ordenar</option>
+                        <option value="" selected="@(ViewData["PriceSortParam"]?.ToString() == "")">Preço: Menor → Maior</option>
+                        <option value="price_desc" selected="@(ViewData["PriceSortParam"]?.ToString() == "price_desc")">Preço: Maior → Menor</option>
+                    </select>
+
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
 
-    <!-- Exibir mensagens de erro ou sucesso -->
-    @if (TempData["Error"] != null)
-    {
-        <div class="alert alert-danger">@TempData["Error"]</div>
-    }
-
-    @if (TempData["Success"] != null)
-    {
-        <div class="alert alert-success">@TempData["Success"]</div>
-    }
-
-    <div class="row">
+    <!-- Mantenha o restante do seu código atual da view Store -->
+    <div class="row row-cols-1 row-cols-md-3 g-4">
         @foreach (var product in Model)
         {
-            <div class="col-md-4 mb-3">
-                <div class="card h-100 shadow-sm">
+            <div class="col">
+                <div class="card h-100 border-0 shadow-sm">
                     <div class="card-body">
-                        <h5 class="card-title">@product.Name</h5>
-                        <p class="card-text"><strong>Preço:</strong> @product.Price.ToString("C")</p>
-                        <p class="card-text"><strong>Estoque:</strong> @product.Stocks</p>
-                    </div>
-                    <div class="card-footer bg-transparent border-top-0">
-                        <div class="btn-group" role="group">
-                            <a asp-action="Details" asp-route-id="@product.Id" class="btn btn-sm btn-outline-secondary">Detalhes</a>
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <h5 class="card-title fw-bold">@product.Name</h5>
+                            <span class="badge @GetStockStatus(product.Stocks) px-2 py-1">
+                                @switch (GetStockStatus(product.Stocks))
+                                {
+                                    case "in-stock":
+                                        <text>Disponível</text>
+                                        break;
+                                    case "low-stock":
+                                        <text>Últimas unidades</text>
+                                        break;
+                                    default:
+                                        <text>Esgotado</text>
+                                        break;
+                                }
+                            </span>
+                        </div>
 
-                            <!-- Adicionar ao Carrinho -->
-                            <form asp-controller="Cart" asp-action="AddToCart" method="post" class="d-inline">
+                        <div class="mb-3">
+                            <p class="text-muted mb-1">Vendido por: @product.SellerName.Split('@')[0]</p>
+                            <h4 class="text-primary">@product.Price.ToString("C")</h4>
+                            <small class="text-muted">Estoque: @product.Stocks unidades</small>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <a asp-action="Details" asp-route-id="@product.Id"
+                               class="btn btn-outline-secondary">
+                                <i class="fas fa-info-circle me-2"></i>Detalhes
+                            </a>
+
+                            <form asp-controller="Cart" asp-action="AddToCart" method="post">
                                 <input type="hidden" name="productId" value="@product.Id" />
                                 <input type="hidden" name="quantity" value="1" />
-                                <button type="submit" class="btn btn-sm btn-outline-primary">Adicionar ao Carrinho</button>
+                                <button type="submit" class="btn btn-primary w-100">
+                                    <i class="fas fa-cart-plus me-2"></i>Adicionar ao Carrinho
+                                </button>
                             </form>
 
-                            <!-- Comprar Direto -->
-                            <form asp-controller="Transactions" asp-action="BuyProduct" method="post" class="d-inline">
-                                <input type="hidden" name="productId" value="@product.Id" />
-                                <button type="submit" class="btn btn-sm btn-outline-success">Comprar</button>
-                            </form>
+                            @if (product.Stocks > 0)
+                            {
+                                <form asp-controller="Transactions" asp-action="BuyProduct" method="post">
+                                    <input type="hidden" name="productId" value="@product.Id" />
+                                    <button type="submit" class="btn btn-success w-100">
+                                        <i class="fas fa-bolt me-2"></i>Comprar Agora
+                                    </button>
+                                </form>
+                            }
+                            else
+                            {
+                                <button class="btn btn-danger w-100" disabled>
+                                    <i class="fas fa-times-circle me-2"></i>Esgotado
+                                </button>
+                            }
                         </div>
+                    </div>
+                    <div class="card-footer bg-transparent border-0 text-muted small">
+                        Anunciado em: @product.DataAnuncio.ToString("dd/MM/yyyy")
                     </div>
                 </div>
             </div>
         }
     </div>
 </div>
+@functions {
+    string GetStockStatus(int stock)
+    {
+        return stock switch
+        {
+            > 1 => "in-stock",
+            > 0 => "low-stock",
+            _ => "out-of-stock"
+        };
+    }
+}
+@section Scripts {
+    <script>
+        // Submit automático quando alterar filtros
+        document.querySelectorAll('select[name="statusFilter"], select[name="sortOrder"]').forEach(select => {
+            select.addEventListener('change', function() {
+                this.form.submit();
+            });
+        });
+    </script>
+}
