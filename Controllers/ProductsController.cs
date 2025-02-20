@@ -229,13 +229,41 @@ namespace LojaRemastered.Controllers
 
         }
 
-        public async Task<IActionResult> Store()
+        public async Task<IActionResult> Store(string searchTerm, string statusFilter, string sortOrder)
         {
-            // Opcional: Filtrar somente produtos disponíveis, se necessário.
-            var products = await _context.Products.ToListAsync();
-            return View(products);
-        }
+            ViewData["CurrentFilter"] = searchTerm;
+            ViewData["CurrentStatus"] = statusFilter;
+            ViewData["PriceSortParam"] = string.IsNullOrEmpty(sortOrder) ? "price_desc" : "";
 
+            var products = _context.Products.AsQueryable();
+
+            // Filtro de busca
+            if (!string.IsNullOrEmpty(searchTerm))
+            {
+                products = products.Where(p => p.Name.Contains(searchTerm));
+            }
+
+            // Filtro por status
+            if (!string.IsNullOrEmpty(statusFilter))
+            {
+                products = statusFilter switch
+                {
+                    "in-stock" => products.Where(p => p.Stocks > 10),
+                    "low-stock" => products.Where(p => p.Stocks > 0 && p.Stocks <= 10),
+                    "out-of-stock" => products.Where(p => p.Stocks == 0),
+                    _ => products
+                };
+            }
+
+            // Ordenação
+            products = sortOrder switch
+            {
+                "price_desc" => products.OrderByDescending(p => p.Price),
+                _ => products.OrderBy(p => p.Price)
+            };
+
+            return View(await products.ToListAsync());
+        }
 
 
 
